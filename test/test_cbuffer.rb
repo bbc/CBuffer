@@ -1,10 +1,8 @@
 require 'helper'
 
-# TODO raise on buffer max flag
-
 class TestCBuffer < Test::Unit::TestCase
   def test_basics
-    b = Cbuffer.new(3)
+    b = CBuffer.new(3)
     assert !b.full?
     assert b.empty?
     assert_equal 3, b.size
@@ -23,7 +21,7 @@ class TestCBuffer < Test::Unit::TestCase
   end
 
   def test_large_buffer
-    b = Cbuffer.new(1000)
+    b = CBuffer.new(1000)
     b.put 1
     b.put 2
     b.put 3
@@ -53,10 +51,40 @@ class TestCBuffer < Test::Unit::TestCase
   end
 
   def test_addding_nil
-    b = Cbuffer.new(10)
+    b = CBuffer.new(10)
     assert !b.full?
     assert b.empty?
     b.put nil
     assert !b.empty?
+  end
+
+  def test_buffer_overload
+    b = CBuffer.new(3)
+    b.raise_on_full = true;
+    assert_raise(CBuffer::BufferFull) {
+      b.put 1
+      b.put 2
+      b.put 3
+      b.put 4
+    }
+  end
+
+  def test_not_buffer_overload
+    b = CBuffer.new(3)
+    b.put 1
+    b.put 2
+    b.put 3
+    b.put 4
+  end
+
+  def test_buffer_overload_over_time
+    b = CBuffer.new(3)
+    b.raise_on_full = true;
+    assert_raise(CBuffer::BufferFull) {
+      b.put 1
+      b.put 2
+      b.put 3
+      b.put nil
+    }
   end
 end

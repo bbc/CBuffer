@@ -1,0 +1,37 @@
+* CBuffer
+
+** Overview
+
+A circular buffer, cyclic buffer or ring buffer is a data structure that uses 
+a single, fixed-size buffer as if it were connected end-to-end. This structure 
+ends itself easily to buffering data streams. This library impliments such a 
+buffer.
+
+** Installation
+
+: gem install cbuffer
+
+** Usage
+
+: require 'cbuffer'
+:
+: # easy url resolving 
+: Linkr.resolve("http://bbc.in/pdTHqe") => http://www.bbc.co.uk
+:
+: # if you need more info
+: link = Linkr.new("http://bbc.in/pdTHqe", {
+:   redirect_limit => 10 # default 5
+: }) 
+
+** TODO
+
+- add threading support 
+
+** Contributing
+- Fork the project
+- Send a pull request
+- Don't touch the .gemspec, I'll do that when I release a new version
+
+** Author
+
+[[http://whomwah.com][Duncan Robertson]] - BBC R&D
