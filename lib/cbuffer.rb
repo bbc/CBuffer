@@ -6,31 +6,31 @@ class CBuffer
   def initialize(capacity)
     @capacity = capacity
     @raise_on_full = false  
-    @f = @b = @fc = 0
+    @writePointer = @readPointer = 0
     @buffer = Array.new(capacity)
   end
 
   def get
-    element = @buffer[@f]
-    @buffer[@f] = nil
-    @fc = @fc - 1
-    @f = (@f + 1) % @capacity
+    element = @buffer[@readPointer]
+    @buffer[@readPointer] = nil
+    @readPointer = @readPointer + 1
+    @readPointer %= @capacity
     element
   end
 
   def put(element)
     raise BufferFull if full? && @raise_on_full
-    @buffer[@b] = element
-    @fc = @fc + 1
-    @b = (@b + 1) % @capacity
+    @buffer[@writePointer] = element
+    @writePointer = @writePointer + 1
+    @writePointer %= @capacity
   end
 
   def full?
-    @f == @b && @fc != 0
+    (@writePointer + 1) % @capacity == @readPointer
   end
 
   def empty?
-    @f == @b && @fc == 0
+    @readPointer == @writePointer
   end
 
   def size
@@ -39,10 +39,6 @@ class CBuffer
 
   def clear
     @buffer.clear
-    @f = @b = @fc = 0
-  end
-
-  def elements
-    @buffer.compact
+    @writePointer = @readPointer = @fc = 0
   end
 end

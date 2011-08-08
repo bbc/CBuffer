@@ -15,13 +15,15 @@ buffer.
 
 : require 'cbuffer'
 :
-: # easy url resolving 
-: Linkr.resolve("http://bbc.in/pdTHqe") => http://www.bbc.co.uk
+: cb = CBuffer.new(3)
+: cb.put {:item=>"one"}
+: cb.put {:item=>"two"}
+: cb.put {:item=>"three"}
+: cb.put {:item=>"four"}
+: cb.full? => true
 :
-: # if you need more info
-: link = Linkr.new("http://bbc.in/pdTHqe", {
-:   redirect_limit => 10 # default 5
-: }) 
+: cb.get => {:item=>"two"}
+: cb.get => {:item=>"three"}
 
 ** TODO
 
