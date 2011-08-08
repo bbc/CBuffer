@@ -37,6 +37,11 @@ class CBuffer
     @capacity
   end
 
+  def clear
+    @buffer.clear
+    @f = @b = @fc = 0
+  end
+
   def elements
     @buffer.compact
   end
