@@ -3,8 +3,32 @@ require "benchmark"
 
 # Comparing a circular buffer implimentation for creating
 # a fixed size FIFO message queue to doing the same with 
-# an Array. As you will see, the circualr buffer approach
-# is much faster when it comes to writing.
+# an Array. As you can see, the circualr buffer approach
+# is much faster when it comes to writing to the queue.
+
+#Put: using Array Shift and Push
+#             user     system      total        real
+#first:   0.240000   0.000000   0.240000 (  0.246438)
+#second:  0.250000   0.000000   0.250000 (  0.244175)
+#third:   0.240000   0.000000   0.240000 (  0.244152)
+#
+#Put: using CBuffer
+#             user     system      total        real
+#first:   0.000000   0.000000   0.000000 (  0.004772)
+#second:  0.010000   0.000000   0.010000 (  0.004764)
+#third:   0.000000   0.000000   0.000000 (  0.004745)
+#
+#Get: using Array
+#             user     system      total        real
+#first:   0.010000   0.000000   0.010000 (  0.002290)
+#second:  0.000000   0.000000   0.000000 (  0.002263)
+#third:   0.000000   0.000000   0.000000 (  0.002285)
+#
+#Get: using CBuffer
+#             user     system      total        real
+#first:   0.010000   0.000000   0.010000 (  0.003606)
+#second:  0.000000   0.000000   0.000000 (  0.003619)
+#third:   0.000000   0.000000   0.000000 (  0.003610)
 
 SAMPLE_SIZE=10000
 
@@ -22,7 +46,7 @@ class ABuffer < Array
   end
 
   def get(offset=0)
-    self[ - 1 + offset ]
+    self[ -1 + offset ]
   end
 end
 

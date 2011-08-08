@@ -60,4 +60,13 @@ class TestCBuffer < Test::Unit::TestCase
     b.clear
     assert b.empty?
   end
+
+  def xtest_example_used_in_readme
+    b = CBuffer.new(3)
+    b.put({ :item => "one" })
+    b.put({ :item => "two" })
+    b.put({ :item => "three" })
+    b.put({ :item => "three" })
+    puts b.elements.inspect
+  end
 end

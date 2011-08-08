@@ -41,4 +41,8 @@ class CBuffer
     @buffer.clear
     @writePointer = @readPointer = @fc = 0
   end
+
+  def elements
+    @buffer
+  end
 end
