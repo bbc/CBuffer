@@ -19,15 +19,16 @@ buffer.
 : cb.put {:item=>"one"}
 : cb.put {:item=>"two"}
 : cb.put {:item=>"three"}
-: cb.put {:item=>"four"}
-: cb.full? => true
-:
+: cb.get => {:item=>"one"}
 : cb.get => {:item=>"two"}
+: cb.put {:item=>"four"}
 : cb.get => {:item=>"three"}
 
 ** TODO
 
-- add threading support 
+- threading support 
+- fetch items by index
+- view onto items
 
 ** Contributing
 - Fork the project
