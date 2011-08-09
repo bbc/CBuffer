@@ -84,5 +84,7 @@ class TestCBuffer < Test::Unit::TestCase
     b.put({ :item => "three" })
     assert_equal({:item => "one"}, b.get)
     assert_equal({:item => "two"}, b.get)
+    b.put({ :item => "four" })
+    assert_equal({:item => "three"}, b.get)
   end
 end
