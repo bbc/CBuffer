@@ -78,14 +78,17 @@ class TestCBuffer < Test::Unit::TestCase
   end
 
   def test_example_used_in_readme
-    b = CBuffer.new(3)
+    b = CBuffer.new(4)
     b.put({ :item => "one" })
     b.put({ :item => "two" })
     b.put({ :item => "three" })
     assert_equal({:item => "one"}, b.get)
     assert_equal({:item => "two"}, b.get)
+    b.put(nil)
     b.put({ :item => "four" })
     assert_equal({:item => "three"}, b.get)
+    assert_equal(nil, b.get)
+    assert_equal({ :item => "four" }, b.get)
   end
 
   def test_again
