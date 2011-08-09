@@ -1,36 +1,32 @@
 class CBuffer
-  attr_accessor :raise_on_full
-
   class BufferFull < StandardError; end
 
   def initialize(capacity)
     @capacity = capacity
     @raise_on_full = false  
-    @writePointer = @readPointer = 0
+    @f = @b = 0
     @buffer = Array.new(capacity)
   end
 
   def get
-    element = @buffer[@readPointer]
-    @buffer[@readPointer] = nil
-    @readPointer = @readPointer + 1
-    @readPointer %= @capacity
+    element = @buffer[@b]
+    @buffer[@b] = nil
+    @b = (@b + 1) % @capacity
     element
   end
 
   def put(element)
-    raise BufferFull if full? && @raise_on_full
-    @buffer[@writePointer] = element
-    @writePointer = @writePointer + 1
-    @writePointer %= @capacity
+    raise BufferFull if full?
+    @buffer[@f] = element
+    @f = (@f + 1) % @capacity
   end
 
   def full?
-    (@writePointer + 1) % @capacity == @readPointer
+    @f == @b && @buffer[@f] != nil
   end
 
   def empty?
-    @readPointer == @writePointer
+    @f == @b && @buffer[@f] == nil
   end
 
   def size
@@ -38,11 +34,7 @@ class CBuffer
   end
 
   def clear
-    @buffer.clear
-    @writePointer = @readPointer = @fc = 0
-  end
-
-  def elements
-    @buffer
+    @buffer = Array.new(@capacity)
+    @f = @b = 0
   end
 end

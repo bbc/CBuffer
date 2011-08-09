@@ -1,7 +1,7 @@
 require 'helper'
 
 class TestCBuffer < Test::Unit::TestCase
-  def test_simple
+  def xtest_simple
     b = CBuffer.new(7)
     assert b.empty?
     b.put "one"
@@ -24,23 +24,39 @@ class TestCBuffer < Test::Unit::TestCase
     assert_equal "eight", b.get
     assert_equal "nine", b.get
     assert_equal nil, b.get
-    assert b.empty?
+  end
+
+  def test_circularness
+    b = CBuffer.new(5)
+    b.put 1 # [1,nil,nil,nil,nil]
+    b.put 2 # [1,2,nil,nil,nil]
+    b.put 3 # [1,2,3,nil,nil]
+    b.get   # [nil,2,3,nil,nil]
+    b.put 4 # [nil,2,3,4,nil]
+    b.put 5 # [nil,2,3,4,5]
+    b.put 6 # [6,2,3,4,5]
+    assert_raise(CBuffer::BufferFull) {
+      b.put(3)
+    }
+    b.get   # [6, nil, 3, 4, 5]
+    b.put 7 # [6,7,3,4,5]
+    assert_raise(CBuffer::BufferFull) {
+      b.put(8)
+    }
   end
 
   def test_buffer_overload
     b = CBuffer.new(3)
-    b.raise_on_full = true;
     assert_raise(CBuffer::BufferFull) {
-      b.put 1
-      b.put 2
-      b.put 3
-      b.put 4
+      b.put(1)
+      b.put(2)
+      b.put(3)
+      b.put(4)
     }
   end
 
-  def test_buffer_overload_over_time
+  def test_buffer_overload_with_nil
     b = CBuffer.new(3)
-    b.raise_on_full = true;
     assert_raise(CBuffer::BufferFull) {
       b.put 1
       b.put 2
@@ -48,25 +64,25 @@ class TestCBuffer < Test::Unit::TestCase
       b.put nil
     }
   end
-
+  
   def test_clear_buffer
     b = CBuffer.new(3)
-    b.put 1
-    b.put 2
-    b.put 3
-    b.put nil
-    b.put 4
-    assert !b.empty?
+    b.put(1)
+    b.put(2)
+    b.put(8)
+    assert_raise(CBuffer::BufferFull) {
+      b.put(nil)
+    }
     b.clear
     assert b.empty?
   end
 
-  def xtest_example_used_in_readme
+  def test_example_used_in_readme
     b = CBuffer.new(3)
     b.put({ :item => "one" })
     b.put({ :item => "two" })
     b.put({ :item => "three" })
-    b.put({ :item => "three" })
-    puts b.elements.inspect
+    assert_equal({:item => "one"}, b.get)
+    assert_equal({:item => "two"}, b.get)
   end
 end

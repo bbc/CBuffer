@@ -6,29 +6,12 @@ require "benchmark"
 # an Array. As you can see, the circualr buffer approach
 # is much faster when it comes to writing to the queue.
 
-#Put: using Array Shift and Push
-#             user     system      total        real
-#first:   0.240000   0.000000   0.240000 (  0.246438)
-#second:  0.250000   0.000000   0.250000 (  0.244175)
-#third:   0.240000   0.000000   0.240000 (  0.244152)
-#
-#Put: using CBuffer
-#             user     system      total        real
-#first:   0.000000   0.000000   0.000000 (  0.004772)
-#second:  0.010000   0.000000   0.010000 (  0.004764)
-#third:   0.000000   0.000000   0.000000 (  0.004745)
-#
-#Get: using Array
-#             user     system      total        real
-#first:   0.010000   0.000000   0.010000 (  0.002290)
-#second:  0.000000   0.000000   0.000000 (  0.002263)
-#third:   0.000000   0.000000   0.000000 (  0.002285)
-#
-#Get: using CBuffer
-#             user     system      total        real
-#first:   0.010000   0.000000   0.010000 (  0.003606)
-#second:  0.000000   0.000000   0.000000 (  0.003619)
-#third:   0.000000   0.000000   0.000000 (  0.003610)
+#                     user     system      total        real
+#Put: Array       0.480000   0.010000   0.490000 (  0.488787)
+#Put: CBuffer     0.010000   0.000000   0.010000 (  0.009931)
+#                     user     system      total        real
+#Get: Array       0.010000   0.000000   0.010000 (  0.004768)
+#Get: CBuffer     0.010000   0.000000   0.010000 (  0.007814)
 
 SAMPLE_SIZE=10000
 
@@ -50,32 +33,31 @@ class ABuffer < Array
   end
 end
 
-def pushing(obj,txt)
-  puts txt 
-  Benchmark.bm(7) do |x|
-    x.report("first:")   { (1..SAMPLE_SIZE).each { |i| obj.put(i) } }
-    x.report("second:")  { (1..SAMPLE_SIZE).each { |i| obj.put(i) } }
-    x.report("third:")   { (1..SAMPLE_SIZE).each { |i| obj.put(i) } }
+def pushing
+  ary = ABuffer.new(SAMPLE_SIZE)
+  buf = CBuffer.new(SAMPLE_SIZE)
+
+  Benchmark.bm(15) do |x|
+    x.report("Put: Array")   { (1..SAMPLE_SIZE).each { |i| ary.put(i) } }
+    x.report("Put: CBuffer") { (1..SAMPLE_SIZE).each { |i| buf.put(i) } }
   end
 end
 
-def pulling(obj,txt)
-  puts txt
-  Benchmark.bm(7) do |x|
-    x.report("first:")   { (1..SAMPLE_SIZE).each { |i| obj.get } }
-    x.report("second:")  { (1..SAMPLE_SIZE).each { |i| obj.get } }
-    x.report("third:")   { (1..SAMPLE_SIZE).each { |i| obj.get } }
+def pulling
+  ary = ABuffer.new(SAMPLE_SIZE)
+  (1..SAMPLE_SIZE).each { |i| ary.put(i) }
+  buf = CBuffer.new(SAMPLE_SIZE)
+  (1..SAMPLE_SIZE).each { |i| buf.put(i) }
+
+  Benchmark.bm(15) do |x|
+    x.report("Get: Array")   { (1..SAMPLE_SIZE).each { |i| ary.get } }
+    x.report("Get: CBuffer") { (1..SAMPLE_SIZE).each { |i| buf.get } }
   end
 end
 
 def init
-  ary = ABuffer.new(SAMPLE_SIZE)
-  buf = CBuffer.new(SAMPLE_SIZE)
-
-  pushing(ary,"Put: using Array Shift and Push")
-  pushing(buf,"Put: using CBuffer")
-  pulling(ary,"Get: using Array")
-  pulling(buf,"Get: using CBuffer")
+  pushing
+  pulling
 end
 
 init
