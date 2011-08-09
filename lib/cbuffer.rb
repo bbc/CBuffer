@@ -3,7 +3,6 @@ class CBuffer
 
   def initialize(capacity)
     @capacity = capacity
-    @raise_on_full = false  
     @f = @b = @fc = 0
     @buffer = Array.new(capacity)
   end
