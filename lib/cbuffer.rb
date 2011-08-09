@@ -4,14 +4,16 @@ class CBuffer
   def initialize(capacity)
     @capacity = capacity
     @raise_on_full = false  
-    @f = @b = 0
+    @f = @b = @fc = 0
     @buffer = Array.new(capacity)
   end
 
   def get
+    return if empty?
     element = @buffer[@b]
     @buffer[@b] = nil
     @b = (@b + 1) % @capacity
+    @fc = @fc - 1
     element
   end
 
@@ -19,14 +21,16 @@ class CBuffer
     raise BufferFull if full?
     @buffer[@f] = element
     @f = (@f + 1) % @capacity
+    @fc = @fc + 1
+    full?
   end
 
   def full?
-    @f == @b && @buffer[@f] != nil
+    @f == @b && @fc != 0
   end
 
   def empty?
-    @f == @b && @buffer[@f] == nil
+    @f == @b && @fc == 0
   end
 
   def size
@@ -35,6 +39,10 @@ class CBuffer
 
   def clear
     @buffer = Array.new(@capacity)
-    @f = @b = 0
+    @f = @b = @fc = 0
+  end
+
+  def to_s
+    "<#{self.class} @size=#{@capacity}>"
   end
 end

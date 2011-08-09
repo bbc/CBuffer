@@ -1,7 +1,7 @@
 require 'helper'
 
 class TestCBuffer < Test::Unit::TestCase
-  def xtest_simple
+  def test_simple
     b = CBuffer.new(7)
     assert b.empty?
     b.put "one"
@@ -86,5 +86,29 @@ class TestCBuffer < Test::Unit::TestCase
     assert_equal({:item => "two"}, b.get)
     b.put({ :item => "four" })
     assert_equal({:item => "three"}, b.get)
+  end
+
+  def test_again
+    b = CBuffer.new(5)
+    assert !b.put(1)
+    assert !b.put(2)
+    assert !b.put(3)
+    assert !b.put(4)
+    assert b.put(5)
+    assert_equal 1, b.get
+    assert_equal 2, b.get
+    assert_equal 3, b.get
+    assert_equal 4, b.get
+    assert_equal 5, b.get
+    assert_equal nil, b.get
+    assert_equal nil, b.get
+    assert !b.put(1)
+    assert !b.put(2)
+    assert !b.put(3)
+    assert !b.put(4)
+    assert_equal 1, b.get
+    assert_equal 2, b.get
+    assert_equal 3, b.get
+    assert_equal 4, b.get
   end
 end
